@@ -1,1 +1,68 @@
-!function(e){"use strict";function t(e){e.classList.remove("help-isVisible")}function n(e){return e.keyCode}fetch("https://raw.githubusercontent.com/miketo/kt-picking-help-public/main/question.mark.html").then(e=>e.text()).then(i=>{e.body.innerHTML+=i,function(){let i=e.getElementById("helpUnderlay"),d=e.getElementById("helpModal"),s=e.getElementById("helpClose");e.addEventListener("keydown",function(e){191===n(e)&&!0===e.shiftKey&&i.classList.add("help-isVisible")},!1),e.addEventListener("keyup",function(e){27===n(e)&&t(i)},!1),i.addEventListener("click",function(){t(i)},!1),d.addEventListener("click",function(e){e.stopPropagation()},!1),s.addEventListener("click",function(){t(i)},!1)}()})}(document);
+(function (d) {
+    'use strict';
+  
+    function removeModal(helpUnderlay) {
+      helpUnderlay.classList.remove('help-isVisible');
+    }
+  
+    function doWhichKey(e) {
+      let charCode = e.keyCode;
+      // String.fromCharCode(charCode) gets the keycode if you want
+      return charCode;
+    }
+  
+    // Primary function, called in checkServerResponse()
+    function doQuestionMark() {
+      let helpUnderlay = d.getElementById('helpUnderlay'),
+          helpModal = d.getElementById('helpModal'),
+          helpClose = d.getElementById('helpClose'),
+          classCol;
+  
+      d.addEventListener('keydown', function (e) {
+        // 191 = '?' key
+        // '?' key toggles the modal
+        if (doWhichKey(e) === 191 && e.shiftKey === true) {
+          helpUnderlay.classList.add('help-isVisible');
+        }
+      }, false);
+  
+      d.addEventListener('keyup', function (e) {
+        // 27 = ESC key
+        if (doWhichKey(e) === 27) {
+          removeModal(helpUnderlay);
+        }
+      }, false);
+  
+      // Modal is removed if the background is clicked
+      helpUnderlay.addEventListener('click', function () {
+        removeModal(helpUnderlay);
+      }, false);
+  
+      // this prevents click on modal from removing the modal
+      helpModal.addEventListener('click', function (e) {
+        e.stopPropagation();
+      }, false);
+  
+      // the close button
+      helpClose.addEventListener('click', function () {
+        removeModal(helpUnderlay);
+      }, false);
+    }
+  
+    function doFetch() {
+      fetch('https://raw.githubusercontent.com/miketo/kt-picking-help-public/main/question.mark.html')
+        .then((response) => {
+          return response.text();
+        })
+        .then((data) => {
+          let helpMenuDiv = document.createElement("div");
+          helpMenuDiv.innerHTML = data;
+          document.body.appendChild(helpMenuDiv);
+          doQuestionMark();
+        });
+    }
+  
+    // This fires the Fetch request and, in turn,
+    // the primary function for the modal.
+    doFetch();
+  }(document));
